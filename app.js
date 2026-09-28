@@ -18,9 +18,6 @@
   var confidenceFill = document.getElementById('confidenceFill');
   var confidenceLabel = document.getElementById('confidenceLabel');
   var liveStatus = document.getElementById('liveStatus');
-  var historyList = document.getElementById('historyList');
-  var historyEmpty = document.getElementById('historyEmpty');
-  var clearHistoryBtn = document.getElementById('clearHistoryBtn');
   var stageEl = document.getElementById('videoStage');
   var debugCard = document.getElementById('debugCard');
   var debugCanvas = document.getElementById('debugCanvas');
@@ -48,7 +45,6 @@
   var VOTE_WINDOW = 6;
   var posHistory = [[], [], []];
   var currentReading = null; // { digits, score }
-  var history = []; // { digits, score, time }
   var lastCommittedDigits = null;
 
   function resetVotes() { posHistory = [[], [], []]; }
@@ -136,39 +132,6 @@
       setConfidence(0);
     }
   }
-
-  function formatTime(d) {
-    var h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
-    function pad(n) { return n < 10 ? '0' + n : '' + n; }
-    return pad(h) + ':' + pad(m) + ':' + pad(s);
-  }
-
-  function pushHistory(digits, score) {
-    history.unshift({ digits: digits, score: score, time: new Date() });
-    if (history.length > 25) history.pop();
-    renderHistory();
-  }
-
-  function renderHistory() {
-    if (history.length === 0) {
-      historyEmpty.hidden = false;
-      historyList.hidden = true;
-      historyList.innerHTML = '';
-      return;
-    }
-    historyEmpty.hidden = true;
-    historyList.hidden = false;
-    historyList.innerHTML = history.map(function (h) {
-      return '<li class="history-item"><span class="digits">' + h.digits + '</span>' +
-        '<span class="meta"><span>' + Math.round(h.score * 100) + '%</span><span>' + formatTime(h.time) + '</span></span></li>';
-    }).join('');
-  }
-
-  clearHistoryBtn.addEventListener('click', function () {
-    history = [];
-    lastCommittedDigits = null;
-    renderHistory();
-  });
 
   // ---------- Camera ----------
   function startCamera() {
@@ -582,10 +545,7 @@
       var finalDigits = locked[0] + locked[1] + locked[2];
       currentReading = { digits: finalDigits, score: avgScore };
       renderReadout();
-      if (finalDigits !== lastCommittedDigits) {
-        lastCommittedDigits = finalDigits;
-        pushHistory(finalDigits, avgScore);
-      }
+      lastCommittedDigits = finalDigits;
     }
   }
 
@@ -805,5 +765,4 @@
   }, stageEl);
 
   renderReadout();
-  renderHistory();
 })();

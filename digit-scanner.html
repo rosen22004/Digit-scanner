@@ -299,72 +299,6 @@
     color: var(--muted);
   }
 
-  .history-card { display: flex; flex-direction: column; min-height: 0; }
-  .history-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px 10px;
-  }
-  .history-head h2 {
-    font-size: 0.85rem;
-    margin: 0;
-    font-weight: 600;
-  }
-  .history-head button {
-    padding: 5px 10px;
-    font-size: 0.72rem;
-  }
-
-  .history-list {
-    list-style: none;
-    margin: 0;
-    padding: 0 16px 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    max-height: 260px;
-    overflow-y: auto;
-  }
-
-  .history-empty {
-    padding: 4px 16px 16px;
-    color: var(--muted);
-    font-size: 0.8rem;
-  }
-
-  .history-item {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 8px 10px;
-    background: var(--panel-2);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-  }
-
-  .history-item .digits {
-    font-family: 'IBM Plex Mono', monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
-
-  .history-item .meta {
-    display: flex;
-    gap: 10px;
-    align-items: baseline;
-    color: var(--muted);
-    font-size: 0.72rem;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .history-item:first-child {
-    border-color: var(--accent-dim);
-  }
-
   ::-webkit-scrollbar { width: 8px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -413,15 +347,6 @@
           <span class="confidence-label" id="confidenceLabel">0%</span>
         </div>
         <p class="live-status" id="liveStatus">Start the camera to begin scanning.</p>
-      </section>
-
-      <section class="card history-card">
-        <div class="history-head">
-          <h2>Reading history</h2>
-          <button id="clearHistoryBtn">Clear</button>
-        </div>
-        <p class="history-empty" id="historyEmpty">No confirmed readings yet.</p>
-        <ul class="history-list" id="historyList" hidden></ul>
       </section>
     </div>
   </main>
