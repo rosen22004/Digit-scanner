@@ -777,9 +777,31 @@
     p.mousePressed = function () { pressStart(p.mouseX, p.mouseY); };
     p.mouseDragged = function () { dragMove(p.mouseX, p.mouseY); };
     p.mouseReleased = function () { dragMode = null; dragStart = null; };
-    p.touchStarted = function () { pressStart(p.mouseX, p.mouseY); return false; };
-    p.touchMoved = function () { dragMove(p.mouseX, p.mouseY); return false; };
-    p.touchEnded = function () { dragMode = null; dragStart = null; return false; };
+
+    // IMPORTANT: only swallow the touch (return false, i.e. preventDefault)
+    // when it actually landed on a drag handle / inside the ROI box and a
+    // drag is genuinely starting. Returning false unconditionally here — as
+    // an earlier version of this file did — tells the browser to block
+    // default behavior for EVERY touch on the ENTIRE PAGE, not just the
+    // canvas: once p5 finishes loading and wires these up, that silently
+    // breaks all scrolling and all button taps site-wide, forever, from
+    // the moment the page loads. Returning true (or nothing) lets normal
+    // taps/scrolling pass through untouched everywhere except an active
+    // drag on the reticle box.
+    p.touchStarted = function () {
+      pressStart(p.mouseX, p.mouseY);
+      return dragMode ? false : true;
+    };
+    p.touchMoved = function () {
+      if (!dragMode) return true;
+      dragMove(p.mouseX, p.mouseY);
+      return false;
+    };
+    p.touchEnded = function () {
+      var wasDragging = !!dragMode;
+      dragMode = null; dragStart = null;
+      return wasDragging ? false : true;
+    };
   }, stageEl);
 
   renderReadout();
