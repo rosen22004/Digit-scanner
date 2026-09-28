@@ -4,6 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Digit Scanner</title>
+<script>
+  // Global safety net: if ANY script on this page fails to load or throws
+  // (including a parse error in app.js itself, which would otherwise
+  // silently disable every button with zero visible feedback), show it
+  // in plain sight right at the top of the page. No dev tools needed.
+  window.addEventListener('error', function (e) {
+    var box = document.getElementById('globalErrorBox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'globalErrorBox';
+      box.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#5a1414;color:#ffd9d3;font:13px/1.5 monospace;padding:10px 14px;white-space:pre-wrap;word-break:break-word;';
+      document.documentElement.insertBefore(box, document.documentElement.firstChild);
+    }
+    var detail = e.filename ? (e.filename.split('/').pop() + ':' + e.lineno + ':' + e.colno + ' — ') : '';
+    var text = 'PAGE ERROR: ' + detail + (e.message || 'unknown error');
+    var line = document.createElement('div');
+    line.textContent = text;
+    box.appendChild(line);
+  });
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -407,7 +427,7 @@
   </main>
 </div>
 
-<script src="p5.min.js"></script>
-<script src="app.js"></script>
+<script src="p5.min.js" crossorigin="anonymous"></script>
+<script src="app.js" crossorigin="anonymous"></script>
 </body>
 </html>
