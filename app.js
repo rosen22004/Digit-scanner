@@ -200,9 +200,12 @@
       videoEl = document.createElement('video');
       // iOS Safari needs these set both as attributes and as properties,
       // and is unreliable decoding frames from a <video> that was never
-      // attached to the document — so it's appended here, just made
-      // invisible rather than display:none (which some WebKit builds also
-      // treat as "not really playing").
+      // attached to the document. It also silently stops decoding video
+      // that's shrunk to ~0 size or opacity:0 (a power-saving throttle),
+      // so instead of hiding it that way, it's placed at full size inside
+      // the stage, sitting *behind* the p5 canvas (z-index), which paints
+      // over it every frame — the raw video is never actually seen, but
+      // Safari still treats it as a normal, visible, decoding element.
       videoEl.setAttribute('autoplay', '');
       videoEl.setAttribute('muted', '');
       videoEl.setAttribute('playsinline', '');
@@ -211,8 +214,8 @@
       videoEl.playsInline = true;
       videoEl.muted = true;
       videoEl.srcObject = stream;
-      videoEl.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;';
-      document.body.appendChild(videoEl);
+      videoEl.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;pointer-events:none;z-index:0;';
+      stageEl.appendChild(videoEl);
       return videoEl.play().then(function () { return stream; });
     }).then(function () {
       cameraStarted = true;
