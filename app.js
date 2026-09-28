@@ -632,7 +632,30 @@
       }
     };
 
+    // The whole body used to run directly inside p.draw. On some mobile
+    // browsers, ANY uncaught exception in here (not just inside scanOnce)
+    // silently kills the entire p5 animation loop — the frame just freezes
+    // forever with no visible error, since there's no console to see it.
+    // Wrapping it lets a bad frame get reported and skipped instead of
+    // freezing the whole app.
     p.draw = function () {
+      try {
+        drawFrame();
+      } catch (drawErr) {
+        console.error('draw() failed:', drawErr);
+        p.background(20, 4, 4);
+        p.noStroke();
+        p.fill(255, 170, 160);
+        p.textAlign(p.CENTER, p.CENTER);
+        p.textSize(13);
+        p.textFont('IBM Plex Sans, sans-serif');
+        var msg = 'Draw error: ' + (drawErr && drawErr.message ? drawErr.message : drawErr);
+        p.text(msg, cw / 2, ch / 2, cw - 24);
+        setLiveStatus(msg + ' — retrying next frame.');
+      }
+    };
+
+    function drawFrame() {
       p.background(5, 8, 5);
 
       if (!cameraStarted) {
@@ -696,7 +719,7 @@
           }
         }
       }
-    };
+    }
 
     function drawCorner(p, x, y, len, dx, dy) {
       p.line(x, y, x + len * dx, y);
