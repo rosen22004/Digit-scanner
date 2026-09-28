@@ -684,7 +684,16 @@
         if (forceScan || (scanning && p.millis() - lastScanAt >= SCAN_INTERVAL_MS)) {
           lastScanAt = p.millis();
           forceScan = false;
-          scanOnce(cw, ch, fit.offsetX, fit.offsetY, fit.scale);
+          // A single bad frame throwing here used to silently kill the
+          // whole p5 draw loop on some mobile browsers (no console visible
+          // to diagnose it) — catch it, surface the real error in the
+          // status line, and keep scanning on the next frame instead.
+          try {
+            scanOnce(cw, ch, fit.offsetX, fit.offsetY, fit.scale);
+          } catch (scanErr) {
+            console.error('scanOnce failed:', scanErr);
+            setLiveStatus('Recognition error: ' + (scanErr && scanErr.message ? scanErr.message : scanErr) + ' — retrying next frame.');
+          }
         }
       }
     };
